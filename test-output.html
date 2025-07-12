@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Web Component Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        .output-display {
+            background-color: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            min-height: 50px;
+        }
+        
+        .output-display.has-result {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        .controls button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background-color: #005a9e;
+        }
+        
+        .log-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: white;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculator Web Component Test</h1>
+        <p>This page demonstrates the Angular Calculator web component with @Output() event handling in vanilla JavaScript.</p>
+        
+        <div class="test-section">
+            <h3>Test 1: Basic Calculator with Output Event Listener</h3>
+            <p>Use the calculator below. The result will be captured via the @Output() event:</p>
+            
+            <simple-calculator id="calculator1"></simple-calculator>
+            
+            <div class="output-display" id="output1">
+                <strong>Result will appear here when you perform a calculation...</strong>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: Multiple Calculators with Separate Event Handling</h3>
+            <p>Two calculators with independent result tracking:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Calculator A</h4>
+                    <simple-calculator id="calculatorA"></simple-calculator>
+                    <div class="output-display" id="outputA">
+                        <strong>Calculator A results...</strong>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Calculator B</h4>
+                    <simple-calculator id="calculatorB"></simple-calculator>
+                    <div class="output-display" id="outputB">
+                        <strong>Calculator B results...</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Dynamic Calculator Creation</h3>
+            <p>Create calculators dynamically and attach event listeners:</p>
+            
+            <div class="controls">
+                <button onclick="createDynamicCalculator()">Create New Calculator</button>
+                <button onclick="clearDynamicCalculators()">Clear All</button>
+            </div>
+            
+            <div id="dynamicContainer"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Event Log</h3>
+            <p>All calculator events are logged here:</p>
+            <div class="log-section" id="eventLog"></div>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+
+    <!-- Load the Angular web component -->
+    <script type="module" lang="JavaScript" src="./dist/angular-web-component/browser/main-SYWYCBJH.js"></script>
+    
+    <script>
+        let calculatorCounter = 0;
+        
+        // Function to log events
+        function logEvent(message) {
+            const logContainer = document.getElementById('eventLog');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Function to setup calculator event listener
+        function setupCalculatorListener(calculator, outputElementId, calculatorName) {
+            calculator.addEventListener('result', function(event) {
+                const result = event.detail;
+                const outputElement = document.getElementById(outputElementId);
+                
+                if (outputElement) {
+                    outputElement.innerHTML = `
+                        <strong>Result: ${result}</strong><br>
+                        <small>Event received from ${calculatorName}</small>
+                    `;
+                    outputElement.className = 'output-display has-result';
+                }
+                
+                logEvent(`${calculatorName} emitted result: ${result}`);
+            });
+        }
+        
+        // Function to create dynamic calculator
+        function createDynamicCalculator() {
+            calculatorCounter++;
+            const container = document.getElementById('dynamicContainer');
+            
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.style.margin = '20px 0';
+            wrapperDiv.style.padding = '15px';
+            wrapperDiv.style.border = '1px solid #ccc';
+            wrapperDiv.style.borderRadius = '5px';
+            wrapperDiv.style.backgroundColor = '#fff';
+            
+            const title = document.createElement('h4');
+            title.textContent = `Dynamic Calculator ${calculatorCounter}`;
+            title.style.margin = '0 0 10px 0';
+            
+            const calculator = document.createElement('simple-calculator');
+            calculator.id = `dynamicCalc${calculatorCounter}`;
+            
+            const output = document.createElement('div');
+            output.className = 'output-display';
+            output.id = `dynamicOutput${calculatorCounter}`;
+            output.innerHTML = '<strong>Waiting for calculation...</strong>';
+            
+            wrapperDiv.appendChild(title);
+            wrapperDiv.appendChild(calculator);
+            wrapperDiv.appendChild(output);
+            container.appendChild(wrapperDiv);
+            
+            // Setup event listener for the new calculator
+            setupCalculatorListener(calculator, `dynamicOutput${calculatorCounter}`, `Dynamic Calculator ${calculatorCounter}`);
+            
+            logEvent(`Created Dynamic Calculator ${calculatorCounter}`);
+        }
+        
+        // Function to clear dynamic calculators
+        function clearDynamicCalculators() {
+            const container = document.getElementById('dynamicContainer');
+            container.innerHTML = '';
+            logEvent('Cleared all dynamic calculators');
+        }
+        
+        // Function to clear log
+        function clearLog() {
+            document.getElementById('eventLog').innerHTML = '';
+        }
+        
+        // Wait for web components to be registered
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded. Setting up calculator event listeners...');
+            
+            // Check if the custom element is defined
+            const checkComponent = () => {
+                if (customElements.get('simple-calculator')) {
+                    console.log('✅ simple-calculator web component is registered!');
+                    
+                    // Setup event listeners for existing calculators
+                    const calc1 = document.getElementById('calculator1');
+                    const calcA = document.getElementById('calculatorA');
+                    const calcB = document.getElementById('calculatorB');
+                    
+                    if (calc1) setupCalculatorListener(calc1, 'output1', 'Calculator 1');
+                    if (calcA) setupCalculatorListener(calcA, 'outputA', 'Calculator A');
+                    if (calcB) setupCalculatorListener(calcB, 'outputB', 'Calculator B');
+                    
+                    logEvent('All calculator event listeners setup complete');
+                } else {
+                    console.log('⏳ Waiting for simple-calculator web component...');
+                    setTimeout(checkComponent, 100);
+                }
+            };
+            
+            checkComponent();
+        });
+    </script>
+</body>
+</html>

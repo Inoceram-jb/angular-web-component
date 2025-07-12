@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular Web Component Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #007acc;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        .controls input, .controls button {
+            margin: 5px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .controls button {
+            background-color: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background-color: #005a9e;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Angular Web Component Test</h1>
+        <p>This page demonstrates the Angular "Hello World" web component working in vanilla HTML/JavaScript.</p>
+        
+        <div class="test-section">
+            <h3>Test 1: Basic Usage</h3>
+            <p>Default web component with no attributes:</p>
+            <hello-world></hello-world>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: Custom Name</h3>
+            <p>Web component with custom name attribute:</p>
+            <hello-world name="Angular Developer"></hello-world>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Custom Message and Name</h3>
+            <p>Web component with both custom message and name:</p>
+            <hello-world message="Welcome" name="to Web Components"></hello-world>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 4: Dynamic Creation with JavaScript</h3>
+            <p>Web component created and modified dynamically:</p>
+            <div id="dynamic-container"></div>
+            
+            <div class="controls">
+                <input type="text" id="nameInput" placeholder="Enter name" value="JavaScript User">
+                <input type="text" id="messageInput" placeholder="Enter message" value="Greetings">
+                <button onclick="createDynamicComponent()">Create Component</button>
+                <button onclick="updateComponent()">Update Component</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 5: Multiple Components</h3>
+            <p>Multiple instances of the same web component:</p>
+            <hello-world name="Component 1" message="Hello"></hello-world>
+            <hello-world name="Component 2" message="Hi"></hello-world>
+            <hello-world name="Component 3" message="Hey"></hello-world>
+        </div>
+    </div>
+
+    <!-- Load the Angular web component -->
+    <script src="./dist/angular-web-component/browser/main-SYWYCBJH.js"></script>
+    
+    <script>
+        let dynamicComponent = null;
+        
+        function createDynamicComponent() {
+            const container = document.getElementById('dynamic-container');
+            const nameInput = document.getElementById('nameInput');
+            const messageInput = document.getElementById('messageInput');
+            
+            // Remove existing component if any
+            if (dynamicComponent) {
+                container.removeChild(dynamicComponent);
+            }
+            
+            // Create new component
+            dynamicComponent = document.createElement('hello-world');
+            dynamicComponent.setAttribute('name', nameInput.value);
+            dynamicComponent.setAttribute('message', messageInput.value);
+            
+            container.appendChild(dynamicComponent);
+        }
+        
+        function updateComponent() {
+            if (dynamicComponent) {
+                const nameInput = document.getElementById('nameInput');
+                const messageInput = document.getElementById('messageInput');
+                
+                dynamicComponent.setAttribute('name', nameInput.value);
+                dynamicComponent.setAttribute('message', messageInput.value);
+            } else {
+                alert('Please create a component first!');
+            }
+        }
+        
+        // Wait for the web component to be registered
+        window.addEventListener('load', function() {
+            console.log('Page loaded. Web component should be available.');
+            
+            // Test if the custom element is defined
+            setTimeout(() => {
+                if (customElements.get('hello-world')) {
+                    console.log('✅ hello-world web component is registered and ready!');
+                } else {
+                    console.log('❌ hello-world web component is not registered yet.');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

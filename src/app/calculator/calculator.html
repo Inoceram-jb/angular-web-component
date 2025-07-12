@@ -1,0 +1,40 @@
+<div class="calculator-container">
+  <h3>Simple Calculator</h3>
+  
+  <div class="inputs-section">
+    <div class="input-group">
+      <label for="number1">Number 1:</label>
+      <input 
+        type="number" 
+        id="number1" 
+        [value]="number1" 
+        (input)="onNumber1Change($event)"
+        placeholder="Enter first number">
+    </div>
+    
+    <div class="input-group">
+      <label for="number2">Number 2:</label>
+      <input 
+        type="number" 
+        id="number2" 
+        [value]="number2" 
+        (input)="onNumber2Change($event)"
+        placeholder="Enter second number">
+    </div>
+  </div>
+
+  <div class="operations-section">
+    <button (click)="add()" class="operation-btn add-btn">+ Add</button>
+    <button (click)="subtract()" class="operation-btn subtract-btn">- Subtract</button>
+    <button (click)="multiply()" class="operation-btn multiply-btn">× Multiply</button>
+    <button (click)="divide()" class="operation-btn divide-btn">÷ Divide</button>
+  </div>
+
+  @if (lastResult !== null) {
+    <div class="result-section">
+      <p class="result-text">
+        Last operation: <strong>{{number1}} {{getOperationSymbol()}} {{number2}} = {{lastResult}}</strong>
+      </p>
+    </div>
+  }
+</div>
